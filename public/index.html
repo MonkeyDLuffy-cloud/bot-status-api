@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Bot Status</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f4f5f7; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; }
+  .card { background:white; border-radius:14px; box-shadow:0 4px 20px rgba(0,0,0,0.1); padding:40px 50px; text-align:center; }
+  .dot { width:18px; height:18px; border-radius:50%; display:inline-block; margin-right:10px; vertical-align:middle; }
+  .online { background:#22c55e; } .offline { background:#ef4444; } .unknown { background:#9ca3af; }
+  h1 { font-size:22px; } p { color:#6b7280; font-size:14px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>RPA Bot Status</h1>
+    <p><span id="dot" class="dot unknown"></span><span id="text">Checking...</span></p>
+    <p id="last"></p>
+  </div>
+<script>
+async function refresh() {
+  const res = await fetch('/status');
+  const data = await res.json();
+  document.getElementById('dot').className = 'dot ' + data.status;
+  document.getElementById('text').textContent =
+    data.status === 'online' ? 'Bot is ONLINE' :
+    data.status === 'offline' ? 'Bot is OFFLINE' : 'No data yet';
+  document.getElementById('last').textContent =
+    data.secondsAgo != null ? 'Last check-in: ' + data.secondsAgo + 's ago' : '';
+}
+refresh();
+setInterval(refresh, 20000);
+</script>
+</body>
+</html>
